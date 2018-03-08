@@ -16,6 +16,7 @@ defmodule MWSClient.Parser do
   defp get_content_type(headers) do
     Enum.find_value headers, fn
       {"Content-Type", value} -> value
+      {"content-type", value} -> value
       _ -> false
     end
   end

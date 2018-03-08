@@ -10,6 +10,8 @@ defmodule MWSClient.Config do
     :seller_id,
     :aws_secret_access_key,
     :mws_auth_token,
+    test_mode: false,
+    port: 443,
     site_id: "ATVPDKIKX0DER",
     signature_method: "HmacSHA256",
     signature_version: "2",
