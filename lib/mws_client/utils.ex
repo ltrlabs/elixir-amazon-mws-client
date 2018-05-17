@@ -36,6 +36,62 @@ defmodule MWSClient.Utils do
     Map.merge(params, camelized_options)
   end
 
+  def deep_add(params, prefix, white_list \\ []) do
+    new_map =
+      Map.get(params, prefix)
+      |> Enum.reject(fn {key, value} -> value == nil || invalid_key?(key, white_list) end)
+      |> Enum.map(fn {k, v} -> {"#{prefix}.#{Inflex.camelize(k)}", v} end)
+      |> Enum.into(%{})
+
+    params
+    |> Map.delete(prefix)
+    |> Map.merge(new_map)
+  end
+
+  def deep_restructure(params, prefix) do
+    restructured_params =
+      Map.get(params, prefix)
+      |> Enum.map(fn {k, v} -> process_deep_key(prefix, k, v) end)
+      |> List.flatten
+      |> Enum.into(%{})
+
+    params
+    |> Map.delete(prefix)
+    |> Map.merge(restructured_params)
+  end
+
+  defp process_deep_key(prefix, key, value) when is_list(value) do
+    Enum.map(value, fn {k, v} -> process_deep_key([prefix, Inflex.camelize(key)], k, v)  end)
+  end
+
+  defp process_deep_key(prefix, key, value) do
+    converted_prefix = process_prefix(prefix)
+    {"#{converted_prefix}.#{Inflex.camelize(key)}", value}
+  end
+
+  defp process_prefix(prefix) when is_list(prefix) do
+    prefix
+    |> List.flatten
+    |> Enum.join(".")
+  end
+
+  defp process_prefix(prefix), do: prefix
+
+  def numbered_deep_restructure(params, prefix, appendage) do
+    restructured_params =
+      Map.get(params, prefix)
+      |> Enum.with_index(1)
+      |> Enum.map(fn {el, index} -> process_deep_map(el, [prefix, appendage, index]) end)
+      |> List.flatten
+      |> Enum.into(%{})
+
+    params
+    |> Map.delete(prefix)
+    |> Map.merge(restructured_params)
+  end
+
+  defp process_deep_map(params, prefix), do: Enum.map(params, fn {k, v} -> process_deep_key(prefix, k, v)  end)
+
   defp invalid_key?(_key, []) do
     false
   end

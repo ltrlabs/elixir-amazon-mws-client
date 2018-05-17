@@ -10,6 +10,7 @@ defmodule MWSClient do
   alias MWSClient.Subscriptions
   alias MWSClient.Orders
   alias MWSClient.Reports
+  alias MWSClient.FulfillmentOutboundShipments
 
   @default_opts [marketplace_id: "ATVPDKIKX0DER"]
 
@@ -142,5 +143,12 @@ defmodule MWSClient do
       {:ok, resp} -> MWSClient.Parser.parse(resp)
       {:error, err} -> raise MWSClient.RequestError, message: inspect(err)
     end
+  end
+
+  # Fulfillment Outbound Shipments
+
+  def create_fulfillment_order(params, config = %Config{}, opts \\ @default_opts) do
+    FulfillmentOutboundShipments.create_fulfillment_order(params, opts)
+    |> request(config)
   end
 end
