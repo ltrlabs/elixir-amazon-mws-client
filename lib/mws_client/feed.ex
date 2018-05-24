@@ -46,4 +46,11 @@ defmodule MWSClient.Feed do
       |> Utils.add(opts, [:marketplace_id])
       |> Utils.to_operation(@version, @path, nil, [])
   end
+
+  def submit_fulfillment_order_request_feed(data, opts \\ @opts) do
+    %{"Action" => "SubmitFeed",
+      "FeedType" => "_POST_FULFILLMENT_ORDER_REQUEST_DATA_"}
+      |> Utils.add(opts, [:marketplace_id])
+      |> Utils.to_operation(@version, @path, data, ["Content-MD5": Utils.content_md5(data)])
+  end
 end

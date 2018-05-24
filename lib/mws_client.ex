@@ -51,6 +51,12 @@ defmodule MWSClient do
     Feed.get_feed_submission_result(feed_id, opts)
     |> request(config)
   end
+
+  def submit_fulfillment_order_request_feed(xml, config = %Config{}, opts \\ @default_opts) do
+    Feed.submit_fulfillment_order_request_feed(xml, opts)
+    |> request(config)
+  end
+
   ### FEEDS
 
   ### PRODUCTS
